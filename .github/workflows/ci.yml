@@ -33,7 +33,6 @@ jobs:
     - name: validate
       if: matrix.os === 'ubuntu-latest'
       run: npm run validate
-    - name: run tests
     - run: npm run nyc
     # Test global install of the package
     - run: npm pack .
