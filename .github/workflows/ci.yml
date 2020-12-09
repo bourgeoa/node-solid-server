@@ -17,7 +17,7 @@ jobs:
     strategy:
       matrix:
         node-version: [10.x, 12.x, 14.x]
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest]
 
     steps:
     - uses: actions/checkout@v2
@@ -27,8 +27,8 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: npm ci
     # test code
-    # - run: npm run standard
-    # - run: npm run validate
+    - run: npm run standard
+    - run: npm run validate
     - run: npm run nyc
     # Test global install of the package
     - run: npm pack .
