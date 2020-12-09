@@ -28,10 +28,10 @@ jobs:
     - run: npm ci
     # test code
     - name: standard
-      if: matrix.os === 'ubuntu-latest' 
+      if: matrix.os == 'ubuntu-latest' 
       run: npm run standard
     - name: validate
-      if: matrix.os === 'ubuntu-latest'
+      if: matrix.os == 'ubuntu-latest'
       run: npm run validate
     - run: npm run nyc
     # Test global install of the package
