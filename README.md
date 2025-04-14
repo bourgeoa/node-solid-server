@@ -9,6 +9,8 @@
 
 `solid-server` lets you run a Solid server on top of the file-system. You can use it as a [command-line tool](https://github.com/solid/node-solid-server/blob/master/README.md#command-line-usage) (easy) or as a [library](https://github.com/solid/node-solid-server/blob/master/README.md#library-usage) (advanced).
 
+The [solid test suite](https://github.com/nodeSolidServer/node-solid-server/blob/main/test/surface/run-solid-test-suite.sh) runs as part of GitHub Actions on this repository, ensuring that this server is always (to the best of our knowledge) fully spec compliant.
+
 ## Solid Features supported
 - [x] [Linked Data Platform](http://www.w3.org/TR/ldp/)
 - [x] [Web Access Control](http://www.w3.org/wiki/WebAccessControl)
@@ -28,11 +30,14 @@ You can install and run the server either using Node.js directly or using
 first approach, for the second approach see the section [use Docker](#use-docker)
 Section below.
 
+**Note**: If using Git for Windows, it is helpful to use the -verbose flag to see the progress of the install.
+
 To install, first install [Node](https://nodejs.org/en/) and then run the following
 
 ```bash
 $ npm install -g solid-server
 ```
+
 
 ### Run a single-user server (beginner)
 
@@ -62,6 +67,15 @@ If you want to run `solid` on a particular folder (different from the one you ar
 ```bash
 $ solid start --root path/to/folder --port 8443 --ssl-key path/to/ssl-key.pem --ssl-cert path/to/ssl-cert.pem
 # Solid server (solid v0.2.24) running on https://localhost:8443/
+```
+
+By default, `solid` runs in `debug all` mode. To stop the debug logs, use `-q`, the quiet parameter.
+
+```bash
+$ DEBUG="solid:*" solid start -q
+# use quiet mode and set debug to all
+# DEBUG="solid:ACL" logs only debug.ACL's
+
 ```
 
 ### Running in development environments
@@ -237,18 +251,24 @@ We have automatic builds set up, so commits to master will trigger a build of ht
 
 ### Development usage
 
-If you want to use Docker in development, then you can build it locally with:
+If you want to use Docker in development, you can build and run the image locally with either docker-compose —
+
+```bash
+git clone https://github.com/solid/node-solid-server
+cd node-solid-server
+docker-compose up -d
+```
+
+ — or these manual commands —
 
 ```bash
 git clone https://github.com/solid/node-solid-server
 cd node-solid-server
 docker build -t node-solid-server .
-```
 
-Run with:
-```bash
 docker run -p 8443:8443 --name solid node-solid-server
 ```
+
 
 This will enable you to login to solid on https://localhost:8443 and then create a new account
 but not yet use that account. After a new account is made you will need to create an entry for 
@@ -362,7 +382,8 @@ In order to really get a feel for the Solid platform, and to test out `solid`,
 you will need the following:
 
 1. A WebID profile and browser certificate from one of the Solid-compliant
-    identity providers, such as [solid.community](https://solid.community).
+    identity providers, such as [solidcommunity.net](bourgeoa
+    community.net).
 
 2. A server-side SSL certificate for `solid` to use (see the section below
     on creating a self-signed certificate for testing).
@@ -444,7 +465,7 @@ You can receive or provide help too:
 - [NSS Gitter channel](https://gitter.im/solid/node-solid-server) for specific (installation) advice about this code base
 - [Create a new issue](https://github.com/solid/node-solid-server/issues/new) to report bugs
 - [Fix an issue](https://github.com/solid/node-solid-server/issues)
-- Reach out to Jackson at jacksonm@inrupt.com to become more involved in maintaining Node Solid Server
+- Reach out to @bourgeoa at alain.bourgeois10@gmail.com to become more involved in maintaining Node Solid Server
 
 Have a look at [CONTRIBUTING.md](https://github.com/solid/node-solid-server/blob/master/CONTRIBUTING.md).
 

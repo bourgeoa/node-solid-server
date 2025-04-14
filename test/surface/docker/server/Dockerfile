@@ -1,7 +1,10 @@
 FROM node:latest
-RUN git clone https://github.com/solid/node-solid-server
+ARG BRANCH=main
+RUN echo Testing branch ${BRANCH} of NSS
+RUN git clone https://github.com/nodeSolidServer/node-solid-server
 WORKDIR node-solid-server
-RUN git checkout master
+RUN git checkout ${BRANCH}
+RUN git status
 RUN npm install
 RUN openssl req -new -x509 -days 365 -nodes \
   -out ./server.cert \

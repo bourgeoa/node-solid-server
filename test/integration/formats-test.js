@@ -22,7 +22,7 @@ describe('formats', function () {
     function isCorrectSubject (idFragment) {
       return (res) => {
         const payload = JSON.parse(res.text)
-        const id = payload[0]['@id']
+        const id = payload['@id']
         assert(id.endsWith(idFragment), 'The subject of the JSON-LD graph is correct')
       }
     }
@@ -36,7 +36,7 @@ describe('formats', function () {
         .expect(200)
         .expect('content-type', /application\/ld\+json/)
         .expect(isValidJSON)
-        .expect(isCorrectSubject('/patch-5-initial.ttl#Iss1408851516666'))
+        .expect(isCorrectSubject(':Iss1408851516666'))
         .end(done)
     })
     it('should return the container listing in JSON-LD if Accept is set to only application/ld+json', function (done) {
@@ -105,6 +105,21 @@ describe('formats', function () {
         .set('accept', 'application/rdf+xml;q=0.4, application/xhtml+xml;q=0.3, text/xml;q=0.2, application/xml;q=0.2, text/html;q=0.3, text/plain;q=0.1, text/turtle;q=1.0, application/n3;q=1')
         .expect('content-type', /text\/turtle/)
         .expect(200, done)
+    })
+  })
+
+  describe('text/plain (non RDFs)', function () {
+    it('Accept text/plain', function (done) {
+      server.get('/put-input.txt')
+        .set('accept', 'text/plain')
+        .expect('Content-type', 'text/plain')
+        .expect(200, done)
+    })
+    it('Accept text/turtle', function (done) {
+      server.get('/put-input.txt')
+        .set('accept', 'text/turtle')
+        .expect('Content-type', 'text/plain; charset=utf-8')
+        .expect(406, done)
     })
   })
 

@@ -65,30 +65,46 @@ describe('LDP', function () {
 
   describe('readContainerMeta', () => {
     it('should return 404 if .meta is not found', () => {
-      return ldp.readContainerMeta('/resources/').catch(err => {
+      return ldp.readContainerMeta('/resources/sampleContainer/').catch(err => {
         assert.equal(err.status, 404)
       })
     })
 
     it('should return content if metaFile exists', () => {
       // file can be empty as well
-      write('This function just reads this, does not parse it', '.meta')
-      return ldp.readContainerMeta('/resources/').then(metaFile => {
-        rm('.meta')
+      write('This function just reads this, does not parse it', 'sampleContainer/.meta')
+      return ldp.readContainerMeta('/resources/sampleContainer/').then(metaFile => {
+        rm('sampleContainer/.meta')
         assert.equal(metaFile, 'This function just reads this, does not parse it')
       })
     })
 
     it('should work also if trailing `/` is not passed', () => {
       // file can be empty as well
-      write('This function just reads this, does not parse it', '.meta')
-      return ldp.readContainerMeta('/resources').then(metaFile => {
-        rm('.meta')
+      write('This function just reads this, does not parse it', 'sampleContainer/.meta')
+      return ldp.readContainerMeta('/resources/sampleContainer').then(metaFile => {
+        rm('sampleContainer/.meta')
         assert.equal(metaFile, 'This function just reads this, does not parse it')
       })
     })
   })
 
+  describe('isOwner', () => {
+    it('should return acl:owner true', () => {
+      const owner = 'https://tim.localhost:7777/profile/card#me'
+      return ldp.isOwner(owner, '/resources/')
+        .then(isOwner => {
+          assert.equal(isOwner, true)
+        })
+    })
+    it('should return acl:owner false', () => {
+      const owner = 'https://tim.localhost:7777/profile/card'
+      return ldp.isOwner(owner, '/resources/')
+        .then(isOwner => {
+          assert.equal(isOwner, false)
+        })
+    })
+  })
   describe('getGraph', () => {
     it('should read and parse an existing file', () => {
       const uri = 'https://localhost:8443/resources/sampleContainer/example1.ttl'
@@ -153,13 +169,13 @@ describe('LDP', function () {
 
     it.skip('with a larger file to exceed allowed quota', function () {
       const randstream = stringToStream(randomBytes(2100))
-      return ldp.put('localhost', '/resources/testQuota.txt', randstream).catch((err) => {
+      return ldp.put('/localhost', '/resources/testQuota.txt', randstream).catch((err) => {
         assert.notOk(err)
       })
     })
     it('should fail if a over quota', function () {
       const hellostream = stringToStream('hello world')
-      return ldp.put('localhost', '/resources/testOverQuota.txt', hellostream).catch((err) => {
+      return ldp.put('/localhost', '/resources/testOverQuota.txt', hellostream).catch((err) => {
         assert.equal(err.status, 413)
       })
     })
@@ -175,13 +191,6 @@ describe('LDP', function () {
       const stream = stringToStream('hello world')
       return ldp.put('/resources/testPut.txt', stream, null).catch(err => {
         assert.equal(err.status, 400)
-      })
-    })
-
-    it('should fail if file.acl and content type not text/turtle', () => {
-      const stream = stringToStream('hello world')
-      return ldp.put('/resources/testPut.txt.acl', stream, 'text/plain').catch(err => {
-        assert.equal(err.status, 415)
       })
     })
   })
