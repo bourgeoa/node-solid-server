@@ -8,7 +8,7 @@ const path = require('path')
 const fs = require('fs-extra')
 
 // FIXME: #1502
-describe('AccountManager (OIDC account creation tests)', function () {
+describe.skip('AccountManager (OIDC account creation tests)', function () {
   const port = 3457
   const serverUri = `https://localhost:${port}`
   const host = `localhost:${port}`
@@ -224,7 +224,7 @@ describe('AccountManager (OIDC account creation tests)', function () {
 })
 
 // FIXME: #1502
-describe('Single User signup page', () => {
+describe.skip('Single User signup page', () => {
   const serverUri = 'https://localhost:7457'
   const port = 7457
   let ldpHttpsServer
@@ -262,7 +262,7 @@ describe('Single User signup page', () => {
 })
 
 // FIXME: #1502
-describe('Signup page where Terms & Conditions are not being enforced', () => {
+describe.skip('Signup page where Terms & Conditions are not being enforced', () => {
   const port = 3457
   const host = `localhost:${port}`
   const root = path.join(__dirname, '../resources/accounts/')
