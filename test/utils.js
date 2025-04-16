@@ -23,15 +23,6 @@ exports.cleanDir = function (dirPath) {
   fs.removeSync(path.join(dirPath, 'robots.txt.acl'))
 }
 
-exports.rmDir = function (dirPath) {
-  fs.rm(dirPath, { recursive: true, force: true }, err => {
-    if (err) {
-      throw err
-    }
-    console.log(`${dirPath} is deleted!`)
-  })
-}
-
 exports.write = function (text, file) {
   return fs.writeFileSync(path.join(__dirname, '/resources/' + file), text)
 }
