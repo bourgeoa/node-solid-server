@@ -2,7 +2,7 @@ const supertest = require('supertest')
 // Helper functions for the FS
 const $rdf = require('rdflib')
 
-const { rm, read, checkDnsSettings, cleanDir } = require('../utils')
+const { rm, read, checkDnsSettings, rmDir } = require('../utils')
 const ldnode = require('../../index')
 const path = require('path')
 const fs = require('fs-extra')
@@ -41,7 +41,7 @@ describe('AccountManager (OIDC account creation tests)', function () {
   after(function () {
     if (ldpHttpsServer) ldpHttpsServer.close()
     fs.removeSync(path.join(dbPath, 'oidc/users/users'))
-    cleanDir(path.join(root, 'localhost'))
+    rmDir(path.join(root, 'localhost'))
   })
 
   const server = supertest(serverUri)
@@ -289,7 +289,7 @@ describe('Signup page where Terms & Conditions are not being enforced', () => {
   after(function () {
     if (ldpHttpsServer) ldpHttpsServer.close()
     fs.removeSync(path.join(dbPath, 'oidc/users/users'))
-    cleanDir(path.join(root, 'localhost'))
+    rmDir(path.join(root, 'localhost'))
     rm('accounts/nicola.localhost')
   })
 
