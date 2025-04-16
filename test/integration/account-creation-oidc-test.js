@@ -8,13 +8,13 @@ const path = require('path')
 const fs = require('fs-extra')
 
 // FIXME: #1502
-describe.skip('AccountManager (OIDC account creation tests)', function () {
+describe('AccountManager (OIDC account creation tests)', function () {
   const port = 3457
   const serverUri = `https://localhost:${port}`
   const host = `localhost:${port}`
-  const root = path.join(__dirname, '/test/resources/accounts/')
-  const configPath = path.join(__dirname, '/test/resources/config')
-  const dbPath = path.join(__dirname, '/test/resources/accounts/db')
+  const root = path.join(__dirname, '../resources/accounts/')
+  const configPath = path.join(__dirname, '../resources/config')
+  const dbPath = path.join(__dirname, '../resources/accounts/db')
 
   let ldpHttpsServer
 
@@ -224,12 +224,12 @@ describe.skip('AccountManager (OIDC account creation tests)', function () {
 })
 
 // FIXME: #1502
-describe.skip('Single User signup page', () => {
+describe('Single User signup page', () => {
   const serverUri = 'https://localhost:7457'
   const port = 7457
   let ldpHttpsServer
-  const rootDir = path.join(__dirname, '/test/resources/accounts/single-user/')
-  const configPath = path.join(__dirname, '/test/resources/config')
+  const rootDir = path.join(__dirname, '../resources/accounts/single-user/')
+  const configPath = path.join(__dirname, '../resources/config')
   const ldp = ldnode.createServer({
     port,
     root: rootDir,
@@ -265,9 +265,9 @@ describe.skip('Single User signup page', () => {
 describe('Signup page where Terms & Conditions are not being enforced', () => {
   const port = 3457
   const host = `localhost:${port}`
-  const root = path.join(__dirname, '/test/resources/accounts/')
-  const configPath = path.join(__dirname, '/test/resources/config')
-  const dbPath = path.join(__dirname, '/test/resources/accounts/db')
+  const root = path.join(__dirname, '../resources/accounts/')
+  const configPath = path.join(__dirname, '../resources/config')
+  const dbPath = path.join(__dirname, '../resources/accounts/db')
   const ldp = ldnode.createServer({
     port,
     root,
