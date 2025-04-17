@@ -293,9 +293,10 @@ describe('Signup page where Terms & Conditions are not being enforced', () => {
     rm('accounts/nicola.localhost')
   })
 
-  beforeEach(function () {
+  /* beforeEach(function () {
     rm('accounts/nicola.localhost')
   })
+  */
 
   it('should not enforce T&C upon creating account', function (done) {
     const subdomain = supertest('https://' + host)
