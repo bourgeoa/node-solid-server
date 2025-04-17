@@ -20,7 +20,7 @@ chai.use(require('dirty-chai'))
 // In this test we always assume that we are Alice
 
 // FIXME #1502
-describe.skip('Authentication API (OIDC)', () => {
+describe('Authentication API (OIDC)', () => {
   let alice, bob // eslint-disable-line no-unused-vars
 
   const aliceServerUri = 'https://localhost:7000'
@@ -513,7 +513,7 @@ describe.skip('Authentication API (OIDC)', () => {
       bob.get('/shared-with-alice.txt')
         .end((err, { status, text }) => {
           expect(status).to.equal(401)
-          expect(text).to.contain('Log in')
+          expect(text).to.contain('GlobalDashboard')
           done(err)
         })
     })

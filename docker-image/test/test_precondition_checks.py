@@ -1,7 +1,8 @@
 # coding=utf-8
 import docker
 import pytest
-import time
+
+from test.wait_for_container import wait_for_container
 
 testinfra_hosts = ['docker://test_container']
 
@@ -23,19 +24,18 @@ def container(client, image):
       detach=True,
       tty=True
   )
-  # give the solid process some seconds to create the directory structure before making assertions
-  time.sleep(2)
+  wait_for_container(container, "Finished: ERROR")
   yield container
   container.remove(force=True)
 
 
 def test_container_fails_with_errors(container):
   assert container.status == "created"
-  logs = container.logs()
-  assert "✗ /opt/solid/config not writable by node" in logs
-  assert "✗ /opt/solid/data not writable by node" in logs
-  assert "✗ /opt/solid/.db not writable by node" in logs
-  assert "✗ /missing/key does not exist" in logs
-  assert "✗ /missing/cert does not exist" in logs
+  logs = str(container.logs())
+  assert "/opt/solid/config not writable by node" in logs
+  assert "/opt/solid/data not writable by node" in logs
+  assert "/opt/solid/.db not writable by node" in logs
+  assert "/missing/key does not exist" in logs
+  assert "/missing/cert does not exist" in logs
   assert "Finished: ERROR" in logs
   assert not "Finished: SUCCESS" in logs

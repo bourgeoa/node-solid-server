@@ -21,12 +21,12 @@ describe('ResourceMapper', () => {
 
     itMapsUrl(mapper, 'a URL with an extension that matches the content type',
       {
-        url: 'http://localhost/space/foo.html',
+        url: 'http://localhost/space/%20foo .html',
         contentType: 'text/html',
         createIfNotExists: true
       },
       {
-        path: `${rootPath}space/foo.html`,
+        path: `${rootPath}space/ foo .html`,
         contentType: 'text/html'
       })
 
@@ -50,6 +50,17 @@ describe('ResourceMapper', () => {
       {
         path: `${rootPath}space/foo.exe$.html`,
         contentType: 'text/html'
+      })
+
+    itMapsUrl(mapper, 'a Url and a contentType with charset',
+      {
+        url: 'http://localhost/space/foo.txt',
+        contentType: 'text/plain; charset=utf-8',
+        createIfNotExists: true
+      },
+      {
+        path: `${rootPath}space/foo.txt`,
+        contentType: 'text/plain'
       })
 
     // Additional PUT cases
@@ -132,12 +143,19 @@ describe('ResourceMapper', () => {
 
     // GET/HEAD/POST/DELETE/PATCH base cases
 
-    itMapsUrl(mapper, 'a URL of a non-existing file',
+    itMapsUrl(mapper, 'a URL of a non-existent folder',
+      {
+        url: 'http://localhost/space/foo/'
+      },
+      [/* no files */],
+      new Error('/space/foo/ Resource not found'))
+
+    itMapsUrl(mapper, 'a URL of a non-existent file',
       {
         url: 'http://localhost/space/foo.html'
       },
       [/* no files */],
-      new Error('Resource not found: /space/foo.html'))
+      new Error('/space/foo.html Resource not found'))
 
     itMapsUrl(mapper, 'a URL of an existing file with extension',
       {
@@ -153,13 +171,13 @@ describe('ResourceMapper', () => {
 
     itMapsUrl(mapper, 'an extensionless URL of an existing file',
       {
-        url: 'http://localhost/space/foo'
+        url: 'http://localhost/space/%2Ffoo%2f'
       },
       [
-        `${rootPath}space/foo$.html`
+        `${rootPath}space/%2Ffoo%2f$.html`
       ],
       {
-        path: `${rootPath}space/foo$.html`,
+        path: `${rootPath}space/%2Ffoo%2f$.html`,
         contentType: 'text/html'
       })
 
@@ -213,14 +231,14 @@ describe('ResourceMapper', () => {
         contentType: 'text/html'
       })
 
-    itMapsUrl(mapper, 'a URL of a new file with encoded characters',
+    itMapsUrl(mapper, 'a URL of a new file with encoded characters and encoded /',
       {
-        url: 'http://localhost/space%2Ffoo%20bar%20bar.html',
+        url: 'http://localhost/%25252fspace%2Ffoo%20bar%20bar.html',
         contentType: 'text/html',
         createIfNotExists: true
       },
       {
-        path: `${rootPath}space/foo bar bar.html`,
+        path: `${rootPath}%25252fspace%2Ffoo bar bar.html`,
         contentType: 'text/html'
       })
 
@@ -271,7 +289,7 @@ describe('ResourceMapper', () => {
       ],
       {
         path: `${rootPath}space/`,
-        contentType: 'application/octet-stream'
+        contentType: 'text/turtle'
       })
 
     itMapsUrl(mapper, 'a URL ending with a slash when index$.html is available',
@@ -284,7 +302,7 @@ describe('ResourceMapper', () => {
       ],
       {
         path: `${rootPath}space/`,
-        contentType: 'application/octet-stream'
+        contentType: 'text/turtle'
       })
 
     itMapsUrl(mapper, 'a URL ending with a slash when index$.ttl is available',
@@ -296,7 +314,7 @@ describe('ResourceMapper', () => {
       ],
       {
         path: `${rootPath}space/`,
-        contentType: 'application/octet-stream'
+        contentType: 'text/turtle'
       })
 
     itMapsUrl(mapper, 'a URL ending with a slash to a folder when index.html is available but index is skipped',
@@ -310,16 +328,19 @@ describe('ResourceMapper', () => {
       ],
       {
         path: `${rootPath}space/`,
-        contentType: 'application/octet-stream'
+        contentType: 'text/turtle'
       })
 
     itMapsUrl(mapper, 'a URL ending with a slash to a folder when no index is available',
       {
         url: 'http://localhost/space/'
       },
+      [
+        `${rootPath}space/.meta` // fs.readdir mock needs one file
+      ],
       {
         path: `${rootPath}space/`,
-        contentType: 'application/octet-stream'
+        contentType: 'text/turtle'
       })
 
     itMapsUrl(mapper, 'a URL of that has an accompanying acl file, but no actual file',
@@ -331,7 +352,7 @@ describe('ResourceMapper', () => {
       ],
       {
         path: `${rootPath}space/`,
-        contentType: 'application/octet-stream'
+        contentType: 'text/turtle'
       })
 
     itMapsUrl(mapper, 'a URL ending with a slash for text/html when index.html is not available',
@@ -347,28 +368,28 @@ describe('ResourceMapper', () => {
 
     itMapsUrl(mapper, 'a URL of that has an accompanying meta file, but no actual file',
       {
-        url: 'http://localhost/space/',
+        url: 'http://localhost/space%2F/',
         contentType: 'text/html',
         createIfNotExists: true
       },
       [
-        `${rootPath}space/index.meta`
+        `${rootPath}space%2F/index.meta`
       ],
       {
-        path: `${rootPath}space/index.html`,
+        path: `${rootPath}space%2F/index.html`,
         contentType: 'text/html'
       })
 
     itMapsUrl(mapper, 'a URL ending with a slash to a folder when index is skipped',
       {
         url: 'http://localhost/space/',
-        contentType: 'application/octet-stream',
+        contentType: 'text/turtle',
         createIfNotExists: true,
         searchIndex: false
       },
       {
         path: `${rootPath}space/`,
-        contentType: 'application/octet-stream'
+        contentType: 'text/turtle'
       })
 
     itMapsUrl(mapper, 'a URL ending with a slash for text/turtle',
@@ -397,14 +418,6 @@ describe('ResourceMapper', () => {
         url: 'http://localhost/space/../bar'
       },
       new Error('Disallowed /.. segment in URL'))
-
-    itMapsUrl(mapper, 'a URL with an encoded /.. path segment',
-      {
-        url: 'http://localhost/space%2F..%2Fbar'
-      },
-      new Error('Disallowed /.. segment in URL'))
-
-    // File to URL mapping
 
     itMapsFile(mapper, 'an HTML file',
       { path: `${rootPath}space/foo.html` },
@@ -463,9 +476,9 @@ describe('ResourceMapper', () => {
       })
 
     itMapsFile(mapper, 'an extensionless unknown file type',
-      { path: `${rootPath}space/foo$.bar` },
+      { path: `${rootPath}space/%2ffoo%2F$.bar` },
       {
-        url: 'http://localhost/space/foo',
+        url: 'http://localhost/space/%2ffoo%2F',
         contentType: 'application/octet-stream'
       })
 
@@ -490,10 +503,17 @@ describe('ResourceMapper', () => {
         contentType: 'text/html'
       })
 
-    itMapsFile(mapper, 'a file with even stranger disallowed IRI characters',
-      { path: `${rootPath}space/Blog discovery for the future? · Issue #96 · scripting:Scripting-News · GitHub.pdf` },
+    itMapsFile(mapper, 'a file with %encoded /',
+      { path: `${rootPath}%2Fspace/%25252Ffoo%2f.html` },
       {
-        url: 'http://localhost/space/Blog%20discovery%20for%20the%20future%3F%20%C2%B7%20Issue%20%2396%20%C2%B7%20scripting%3AScripting-News%20%C2%B7%20GitHub.pdf',
+        url: 'http://localhost/%2Fspace/%25252Ffoo%2f.html',
+        contentType: 'text/html'
+      })
+
+    itMapsFile(mapper, 'a file with even stranger disallowed IRI characters',
+      { path: `${rootPath}%2fspace%2F/Blog discovery for the future? · Issue #96 · scripting:Scripting-News · GitHub.pdf` },
+      {
+        url: 'http://localhost/%2fspace%2F/Blog%20discovery%20for%20the%20future%3F%20%C2%B7%20Issue%20%2396%20%C2%B7%20scripting%3AScripting-News%20%C2%B7%20GitHub.pdf',
         contentType: 'application/pdf'
       })
   })
@@ -663,6 +683,7 @@ function mapsUrl (it, mapper, label, options, files, expected) {
   function mockReaddir () {
     mapper._readdir = async (path) => {
       expect(path.startsWith(`${rootPath}space/`)).to.equal(true)
+      if (!files.length) return
       return files.map(f => f.replace(/.*\//, ''))
     }
   }

@@ -20,12 +20,24 @@ describe('Header handler', () => {
     request = supertest(server)
   })
 
-  describe('MS-Author-Via', () => {
+  describe('MS-Author-Via', () => { // deprecated
     describeHeaderTest('read/append for the public', {
       resource: '/public-ra',
       headers: {
         'MS-Author-Via': 'SPARQL',
         'Access-Control-Expose-Headers': /(^|,\s*)MS-Author-Via(,|$)/
+      }
+    })
+  })
+
+  describe('Accept-* for a resource document', () => {
+    describeHeaderTest('read/append for the public', {
+      resource: '/public-ra',
+      headers: {
+        'Accept-Patch': 'text/n3, application/sparql-update, application/sparql-update-single-match',
+        'Accept-Post': '*/*',
+        'Accept-Put': '*/*',
+        'Access-Control-Expose-Headers': /(^|,\s*)Accept-Patch, Accept-Post, Accept-Put(,|$)/
       }
     })
   })
@@ -48,13 +60,13 @@ describe('Header handler', () => {
     })
 
     // FIXME: https://github.com/solid/node-solid-server/issues/1502
-    //  describeHeaderTest('read/write/append/control for the user, nothing for the public', {
-    //    resource: '/user-rwac-public-0',
-    //    headers: {
-    //      'WAC-Allow': 'user="read write append control",public=""',
-    //      'Access-Control-Expose-Headers': /(^|,\s*)WAC-Allow(,|$)/
-    //    }
-    //  })
+    describeHeaderTest('read/write/append/control for the user, nothing for the public', {
+      resource: '/user-rwac-public-0',
+      headers: {
+        'WAC-Allow': 'user="read write append control",public=""',
+        'Access-Control-Expose-Headers': /(^|,\s*)WAC-Allow(,|$)/
+      }
+    })
   })
 
   function describeHeaderTest (label, { resource, headers }) {

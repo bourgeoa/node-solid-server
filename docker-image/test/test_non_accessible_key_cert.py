@@ -1,9 +1,10 @@
 # coding=utf-8
 import docker
 import pytest
-import time
 
 import os
+
+from test.wait_for_container import wait_for_container
 
 testinfra_hosts = ['docker://test_container']
 
@@ -21,16 +22,15 @@ def container(client, image):
       detach=True,
       tty=True
   )
-  # give the solid process some seconds to create the directory structure before making assertions
-  time.sleep(2)
+  wait_for_container(container, "Finished: ERROR")
   yield container
   container.remove(force=True)
 
 
 def test_container_fails_with_errors(container):
   assert container.status == "created"
-  logs = container.logs()
-  assert "✗ /root not readable by node" in logs
-  assert "✗ /etc/shadow not readable by node" in logs
+  logs = str(container.logs())
+  assert "/root not readable by node" in logs
+  assert "/etc/shadow not readable by node" in logs
   assert "Finished: ERROR" in logs
   assert not "Finished: SUCCESS" in logs

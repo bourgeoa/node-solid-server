@@ -50,7 +50,7 @@ module.exports = [
   },
   {
     name: 'config-path',
-    question: 'Path to the config directory (for example: /etc/solid-server)',
+    question: 'Path to the config directory (for example: ./config)',
     default: './config',
     prompt: true
   },
@@ -140,6 +140,12 @@ module.exports = [
   {
     name: 'no-live',
     help: 'Disable live support through WebSockets',
+    flag: true,
+    default: false
+  },
+  {
+    name: 'no-prep',
+    help: 'Disable Per Resource Events',
     flag: true,
     default: false
   },
